@@ -1,5 +1,5 @@
 html {
-	background-color: #cfb8de;
+	background-color: #dbc8a4;
 }
 
 .title {
@@ -8,45 +8,21 @@ html {
 }
 
 .playArea {
-  font-family: "Lucida Console", monospace;
+  font-family: "Helvetica", sans-serif;
   align-content: center;
 }
 
-.questions {
+.playArea {
+  display: grid;
+  grid-template-columns: auto auto auto auto;
+  gap: 20px;
   width: 90vw;
   height: 50vh;
   margin: auto;
   border: 2px solid black;
-  background-color: #e9daf2;
+  background-color: #6b4931;
   margin-bottom: 1vh;
-  text-align: left;
   padding: 8px;
-}
-
-.answers {
-  width: 90vw;
-  margin: auto;
-  border: 2px solid black;
-  background-color: #e9daf2;
-  padding: 8px;
-}
-
-.textbox {
-  width: 90vw;
-  margin: auto;
-  border: none;
-  outline: none;
-  background-color: #e9daf2;
-  padding: 2px;
-}
-
-/*.textbox:focus{
-  background-color: #dbcae6;
-}
-*/
-.textbox::placeholder {
-  font-family: "Lucida Console", monospace;
-  align-content: center;
 }
 
 .buttonPlacement {
