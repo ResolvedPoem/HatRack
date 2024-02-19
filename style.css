@@ -1,0 +1,74 @@
+html {
+	background-color: #cfb8de;
+}
+
+.title {
+  font-family: "Helvetica", sans-serif;
+  text-align: center;
+}
+
+.playArea {
+  font-family: "Lucida Console", monospace;
+  align-content: center;
+}
+
+.questions {
+  width: 90vw;
+  height: 50vh;
+  margin: auto;
+  border: 2px solid black;
+  background-color: #e9daf2;
+  margin-bottom: 1vh;
+  text-align: left;
+  padding: 8px;
+}
+
+.answers {
+  width: 90vw;
+  margin: auto;
+  border: 2px solid black;
+  background-color: #e9daf2;
+  padding: 8px;
+}
+
+.textbox {
+  width: 90vw;
+  margin: auto;
+  border: none;
+  outline: none;
+  background-color: #e9daf2;
+  padding: 2px;
+}
+
+/*.textbox:focus{
+  background-color: #dbcae6;
+}
+*/
+.textbox::placeholder {
+  font-family: "Lucida Console", monospace;
+  align-content: center;
+}
+
+.buttonPlacement {
+  text-align: center;
+}
+
+.button {
+  background-color: #fad761; /* Green */
+  border: 2px solid #fad761;
+  color: black;
+  padding: 15px 32px;
+  margin-right: 5vw;
+  margin-left: 5vw;
+  margin-top: 10vh;
+  border-radius: 6px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
+
+.button:hover {
+  transition-duration: 0.5s;
+  background-color: #e9daf2;
+ }
