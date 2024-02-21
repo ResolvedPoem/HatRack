@@ -34,18 +34,22 @@ html {
   border-radius: 50%;
   width: 10vh;
   height: 10vh;
-  background-color: red;
+  opacity: .5;
 }
 
 #hatOne {
   left: 20vw;
+  background-color: yellow;
 }
 #hatTwo {
   left: 40vw;
+  background-color: red;
 }
 #hatThree {
   left: 60vw;
+  background-color: green;
 }
 #hatFour {
   left: 80vw;
+  background-color: blue;
 }

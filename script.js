@@ -1,11 +1,11 @@
 var playArea = document.getElementById("playArea")
 
-
+var pegCount = 12;
 var snapPointsLeft = [];
 var snapPointsTop = [];
 let topIteration = 0;
 let snapOffset = [0, 0];
-for (var i = 0; i < 12; i++) {
+for (var i = 0; i < pegCount; i++) {
   var pegs = document.createElement("div");
   pegs.style.margin = "auto";
   pegs.style.marginTop = "5vh";
@@ -15,14 +15,14 @@ for (var i = 0; i < 12; i++) {
   pegs.style.background = "#4d392c";
   pegs.style.borderRadius = "50%";
   pegs.id = `pegs${i}`;
+  pegs.classList.add(`pegs`);
   playArea.appendChild(pegs);
 }
 
-for (var i = 0; i < 12; i++) {
+for (var i = 0; i < pegCount; i++) {
   if(i == 0) {
     let pegs = document.getElementById(`pegs0`);
-    snapOffset = [pegs.offsetLeft, pegs.offsetTop];
-    console.log(snapOffset);
+    snapOffset = [pegs.offsetLeft + pegs.clientWidth / 2, pegs.offsetTop + pegs.clientHeight / 2];
   }
 
   if (i < 4) {
@@ -31,12 +31,11 @@ for (var i = 0; i < 12; i++) {
   }
   if (i % 4 == 0) {
     let snapToDistance = playArea.clientHeight / 3;
-    console.log(snapToDistance, topIteration);
     snapPointsTop.push(Math.ceil(topIteration * snapToDistance) + snapOffset[1]);
     topIteration++;
   }
 }
-console.log(snapPointsLeft, snapPointsTop);
+
 
 function closest(val, arr) {
   return arr.reduce((a, b) => {
@@ -85,15 +84,66 @@ function dragElement(elmnt) {
   }
 
   function closeDragElement(event) {
-    var snapX = closest(event.clientX,snapPointsLeft);
-    var snapY = closest(event.clientY,snapPointsTop);
 
-    elmnt.style.top = `${snapY - elmnt.clientHeight / 2}px`;
-    elmnt.style.left = `${snapX - elmnt.clientWidth / 2}px`;
+    let div1 = event.target.getBoundingClientRect();
+    let div1Top = div1.top;
+    let div1Left = div1.left;
+    let div1Right = div1.right;
+    let div1Bottom = div1.bottom;
+    let hasSnapped = false;
+
+    for (i = 0; i < pegCount; i++) {
+
+      let div2 = document.getElementsByClassName(`pegs`)[i].getBoundingClientRect();
+      let div2Top = div2.top;
+      let div2Left = div2.left;
+      let div2Right = div2.right;
+      let div2Bottom = div2.bottom;
+
+      let horizontalMatch = false;
+      let verticalMatch = false;
+      let intersect = false;
+
+      if ((div2Top > div1Top && div2Top < div1Bottom)||(div2Bottom > div1Top && div2Bottom < div1Bottom)) {
+        verticalMatch = true;
+      } else{
+        verticalMatch = false;
+      }
+
+      if ((div2Right > div1Left && div2Right < div1Right)||(div2Left < div1Right && div2Left > div1Left)) {
+        horizontalMatch = true;
+      } else {
+        horizontalMatch = false;
+      }
+
+      if (horizontalMatch && verticalMatch){
+        intersect = true;
+      } else {
+        intersect = false;
+      }
+
+      var snapX = closest(event.clientX,snapPointsLeft);
+      var snapY = closest(event.clientY,snapPointsTop);
+
+      if (intersect == true){
+        elmnt.style.top = `${snapY - elmnt.clientHeight / 2}px`;
+        elmnt.style.left = `${snapX - elmnt.clientWidth / 2}px`;
+        hasSnapped = true;
+      }
+    }
+    if (!hasSnapped) {
+      applyGravity(event.target);
+    }
     // stop moving when mouse button is released:
     document.onmouseup = null;
     document.onmousemove = null;
   }
+}
+
+function applyGravity(div) {
+  let floor = window.scrollY + window.innerHeight - div.clientHeight;
+  div.style.top = `${floor}px`;
+
 }
 
 
