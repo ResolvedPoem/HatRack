@@ -10,10 +10,9 @@ for (var i = 0; i < pegCount; i++) {
   pegs.style.margin = "auto";
   pegs.style.marginTop = "5vh";
   pegs.style.marginBottom = "5vh";
-  pegs.style.width = "3vh";
-  pegs.style.height = "3vh";
-  pegs.style.background = "#4d392c";
-  pegs.style.borderRadius = "50%";
+  pegs.style.width = "4vh";
+  pegs.style.height = "8vh";
+  // pegs.style.borderRadius = "50%";
   pegs.id = `pegs${i}`;
   pegs.classList.add(`pegs`);
   playArea.appendChild(pegs);
@@ -62,6 +61,7 @@ function dragElement(elmnt) {
   function dragMouseDown(e) {
     e = e || window.event;
     e.preventDefault();
+    e.target.style.zIndex = 1;
     // get the mouse cursor position at startup:
     pos3 = e.clientX;
     pos4 = e.clientY;
@@ -126,7 +126,7 @@ function dragElement(elmnt) {
       var snapY = closest(event.clientY,snapPointsTop);
 
       if (intersect == true){
-        elmnt.style.top = `${snapY - elmnt.clientHeight / 2}px`;
+        elmnt.style.top = `${snapY - elmnt.clientHeight / 8}px`;
         elmnt.style.left = `${snapX - elmnt.clientWidth / 2}px`;
         hasSnapped = true;
       }
@@ -137,6 +137,7 @@ function dragElement(elmnt) {
     // stop moving when mouse button is released:
     document.onmouseup = null;
     document.onmousemove = null;
+    event.target.style.zIndex = 0;
   }
 }
 
