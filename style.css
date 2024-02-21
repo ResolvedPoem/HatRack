@@ -29,22 +29,23 @@ html {
   text-align: center;
 }
 
-.button {
-  background-color: #fad761; /* Green */
-  border: 2px solid #fad761;
-  color: black;
-  padding: 15px 32px;
-  margin-right: 5vw;
-  margin-left: 5vw;
-  margin-top: 10vh;
-  border-radius: 6px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
+.hat {
+  position: absolute;
+  border-radius: 50%;
+  width: 10vh;
+  height: 10vh;
+  background-color: red;
 }
 
-.button:hover {
-  transition-duration: 0.5s;
-  background-color: #e9daf2;
- }
+#hatOne {
+  left: 20vw;
+}
+#hatTwo {
+  left: 40vw;
+}
+#hatThree {
+  left: 60vw;
+}
+#hatFour {
+  left: 80vw;
+}
