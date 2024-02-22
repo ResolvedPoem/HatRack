@@ -121,9 +121,8 @@ function dragElement(elmnt) {
       } else {
         intersect = false;
       }
-
       var snapX = closest(event.clientX,snapPointsLeft);
-      var snapY = closest(event.clientY,snapPointsTop);
+      var snapY = closest(event.target.offsetTop,snapPointsTop);
 
       if (intersect == true){
         elmnt.style.top = `${snapY - elmnt.clientHeight / 8}px`;
@@ -138,6 +137,7 @@ function dragElement(elmnt) {
     document.onmouseup = null;
     document.onmousemove = null;
     event.target.style.zIndex = 0;
+    console.log(event.target);
   }
 }
 
