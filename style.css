@@ -1,6 +1,7 @@
 html {
 	background-image: url("./Images/Wall.jpg");
   background-size: 100vw 100vh;
+  overflow: hidden;
 }
 
 .title {
@@ -32,33 +33,42 @@ html {
 
 .hat {
   position: absolute;
-  border-radius: 50%;
   width: 40vh;
-  height: 40vh;
 }
 
 .pegs {
   background-image: url("./Images/peg.png");
   background-size: 4vh 8vh;
+  z-index: 2;
 }
 
 #hatOne {
   left: 20vw;
-  background-image: url("./Images/Fedora.png");
+  background-image: url("./Images/FedoraPatternTest.png");
   background-size: 40vh;
+  background-repeat: no-repeat;
+  height: 45vh;
 }
 #hatTwo {
   left: 40vw;
-  background-image: url("./Images/flatcap.png");
+  background-image: url("./Images/flatcapPatternTest.png");
   background-size: 40vh;
+  background-repeat: no-repeat;
+  height: 40vh;
 }
 #hatThree {
   left: 60vw;
-  background-image: url("./Images/PithHelmet.png");
-  background-size: 40vh;
+  background-image: url("./Images/mortarboardpatterntest.png");
+  background-size: 50vh;
+  background-repeat: no-repeat;
+  height: 70vh;
+  width: 50vh;
+
 }
 #hatFour {
   left: 80vw;
-  background-image: url("./Images/visor.png");
+  background-image: url("./Images/visorPatternTest.png");
   background-size: 40vh;
+  background-repeat: no-repeat;
+  height: 45vh;
 }

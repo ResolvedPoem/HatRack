@@ -5,6 +5,7 @@ var snapPointsLeft = [];
 var snapPointsTop = [];
 let topIteration = 0;
 let snapOffset = [0, 0];
+var gravity = false;
 for (var i = 0; i < pegCount; i++) {
   var pegs = document.createElement("div");
   pegs.style.margin = "auto";
@@ -15,6 +16,7 @@ for (var i = 0; i < pegCount; i++) {
   // pegs.style.borderRadius = "50%";
   pegs.id = `pegs${i}`;
   pegs.classList.add(`pegs`);
+  pegs.style.zIndex = 2;
   playArea.appendChild(pegs);
 }
 
@@ -61,10 +63,16 @@ function dragElement(elmnt) {
   function dragMouseDown(e) {
     e = e || window.event;
     e.preventDefault();
-    e.target.style.zIndex = 1;
+    e.target.style.zIndex = 4;
     // get the mouse cursor position at startup:
     pos3 = e.clientX;
     pos4 = e.clientY;
+    if(gravity) {
+      clearInterval(gravity);
+      gravity = false;
+      timesBounced = 0;
+      speedY = -10;
+    }
     document.onmouseup = closeDragElement;
     // call a function whenever the cursor moves:
     document.onmousemove = elementDrag;
@@ -131,19 +139,44 @@ function dragElement(elmnt) {
       }
     }
     if (!hasSnapped) {
-      applyGravity(event.target);
+      gravity = setInterval(applyGravity, 10, event.target);
     }
     // stop moving when mouse button is released:
     document.onmouseup = null;
     document.onmousemove = null;
-    event.target.style.zIndex = 0;
-    console.log(event.target);
+    if (event.target.id != "hatFour") {
+      event.target.style.zIndex = 3;
+    }
+    else {
+      event.target.style.zIndex = 1;
+    }
   }
 }
 
+let speedY = -10;
+let bounces = 3;
+let timesBounced = 0;
 function applyGravity(div) {
   let floor = window.scrollY + window.innerHeight - div.clientHeight;
-  div.style.top = `${floor}px`;
+  let location = Number(div.style.top.replace(/\D/g,''));
+  if(location >= floor) {
+    if(timesBounced < bounces) {
+      speedY = -10/timesBounced;
+      div.style.top = `${floor + speedY}px`;
+      timesBounced++;
+    } else {
+      div.style.top = `${floor}px`;
+      clearInterval(gravity);
+      gravity = false;
+      timesBounced = 0;
+      speedY = -10;
+    }
+  } else {
+    div.style.top = `${location + speedY}px`;
+    speedY += 1;
+  }
+
+
 
 }
 
