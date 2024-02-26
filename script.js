@@ -92,11 +92,11 @@ function dragElement(elmnt) {
   }
 
   function closeDragElement(event) {
-
+    let sideSnapOffset = 100;
     let div1 = event.target.getBoundingClientRect();
     let div1Top = div1.top;
-    let div1Left = div1.left;
-    let div1Right = div1.right;
+    let div1Left = div1.left + sideSnapOffset;
+    let div1Right = div1.right - sideSnapOffset;
     let div1Bottom = div1.bottom;
     let hasSnapped = false;
 
