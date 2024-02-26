@@ -1,42 +1,53 @@
 var playArea = document.getElementById("playArea")
 
-var pegCount = 12;
+var pegCount = [3,4];
 var snapPointsLeft = [];
 var snapPointsTop = [];
 let topIteration = 0;
 let snapOffset = [0, 0];
-var gravity = false;
-for (var i = 0; i < pegCount; i++) {
-  var pegs = document.createElement("div");
-  pegs.style.margin = "auto";
-  pegs.style.marginTop = "5vh";
-  pegs.style.marginBottom = "5vh";
-  pegs.style.width = "4vh";
-  pegs.style.height = "8vh";
-  // pegs.style.borderRadius = "50%";
-  pegs.id = `pegs${i}`;
-  pegs.classList.add(`pegs`);
-  pegs.style.zIndex = 2;
-  playArea.appendChild(pegs);
-}
-
-for (var i = 0; i < pegCount; i++) {
-  if(i == 0) {
-    let pegs = document.getElementById(`pegs0`);
-    snapOffset = [pegs.offsetLeft + pegs.clientWidth / 2, pegs.offsetTop + pegs.clientHeight / 2];
-  }
-
-  if (i < 4) {
-    let snapToDistance = playArea.clientWidth / 4;
-    snapPointsLeft.push(Math.ceil(i * snapToDistance) + snapOffset[0]);
-  }
-  if (i % 4 == 0) {
-    let snapToDistance = playArea.clientHeight / 3;
-    snapPointsTop.push(Math.ceil(topIteration * snapToDistance) + snapOffset[1]);
-    topIteration++;
+for (var row = 0; row < pegCount[0]; row++) {
+  for (var column = 0; column < pegCount[1]; column++) {
+    var pegs = document.createElement("div");
+    pegs.style.margin = "auto";
+    pegs.style.marginTop = "5vh";
+    pegs.style.marginBottom = "5vh";
+    pegs.style.width = "4vh";
+    pegs.style.height = "8vh";
+    // pegs.style.borderRadius = "50%";
+    pegs.id = `pegs,${row},${column}`;
+    pegs.classList.add(`pegs`);
+    pegs.style.zIndex = 2;
+    playArea.appendChild(pegs);
+    if (pegs.id == "pegs,0,1" || pegs.id == "pegs,1,2" || pegs.id == "pegs,1,3" || pegs.id == "pegs,2,2") {
+      pegs.addEventListener("click",clickPeg);
+    }
   }
 }
+// var fallingPegs = ["pegs2", "pegs7", "pegs8", "pegs11"]
 
+for (var row = 0; row < pegCount[0]; row++) {
+  for (var column = 0; column < pegCount[1]; column++) {
+    let pegId = `pegs,${row},${column}`;
+    let pegs = document.getElementById(pegId);
+    let pegSplit = pegId.split(`,`);
+    if(pegSplit[1] == 0 && pegSplit[2] == 0) {
+      snapOffset = [pegs.offsetLeft + pegs.clientWidth / 2, pegs.offsetTop + pegs.clientHeight / 2];
+    }
+
+    if (pegSplit[1] == 0) {
+      let snapToDistance = playArea.clientWidth / 4;
+      snapPointsLeft.push(Math.ceil(column * snapToDistance) + snapOffset[0]);
+    }
+
+    if (pegSplit[2] == 0) {
+      let snapToDistance = playArea.clientHeight / 3;
+      snapPointsTop.push(Math.ceil(row * snapToDistance) + snapOffset[1]);
+    }
+    pegs.style.position = "absolute";
+    pegs.style.top = `${snapPointsTop[pegSplit[1]] - pegs.clientHeight}px`;
+    pegs.style.left = `${snapPointsLeft[pegSplit[2]]}px`;
+  }
+}
 
 function closest(val, arr) {
   return arr.reduce((a, b) => {
@@ -48,6 +59,10 @@ var draggableElements = document.getElementsByClassName("hat")
 
 for(var i = 0; i < draggableElements.length; i++){
     dragElement(draggableElements[i]);
+}
+
+function clickPeg(e) {
+  e.target.gravity = setInterval(applyGravity, 10, e.target);
 }
 
 function dragElement(elmnt) {
@@ -67,9 +82,10 @@ function dragElement(elmnt) {
     // get the mouse cursor position at startup:
     pos3 = e.clientX;
     pos4 = e.clientY;
-    if(gravity) {
-      clearInterval(gravity);
-      gravity = false;
+  
+    if(event.target.gravity) {
+      clearInterval(event.target.gravity);
+      event.target.gravity = false;
       timesBounced = 0;
       speedY = -10;
     }
@@ -100,7 +116,7 @@ function dragElement(elmnt) {
     let div1Bottom = div1.bottom;
     let hasSnapped = false;
 
-    for (i = 0; i < pegCount; i++) {
+    for (i = 0; i < 12; i++) {
 
       let div2 = document.getElementsByClassName(`pegs`)[i].getBoundingClientRect();
       let div2Top = div2.top;
@@ -139,7 +155,7 @@ function dragElement(elmnt) {
       }
     }
     if (!hasSnapped) {
-      gravity = setInterval(applyGravity, 10, event.target);
+      event.target.gravity = setInterval(applyGravity, 10, event.target);
     }
     // stop moving when mouse button is released:
     document.onmouseup = null;
@@ -157,23 +173,32 @@ let speedY = -10;
 let bounces = 3;
 let timesBounced = 0;
 function applyGravity(div) {
+  if(div.speedY == undefined) {
+      div.timesBounced = 0;
+      div.speedY = -10;    
+  }
   let floor = window.scrollY + window.innerHeight - div.clientHeight;
   let location = Number(div.style.top.replace(/\D/g,''));
+  if(div.id.includes(`pegs`)) {
+    let rotation = div.style.transform.replace(/\D/g,'') || 1;
+    rotation = Number(rotation) + 10;
+    div.style.transform = `rotate(${rotation}deg)`;
+  }
   if(location >= floor) {
-    if(timesBounced < bounces) {
-      speedY = -10/timesBounced;
-      div.style.top = `${floor + speedY}px`;
-      timesBounced++;
+    if(div.timesBounced < bounces) {
+      div.speedY = -10/div.timesBounced;
+      div.style.top = `${floor + div.speedY}px`;
+      div.timesBounced++;
     } else {
       div.style.top = `${floor}px`;
-      clearInterval(gravity);
-      gravity = false;
-      timesBounced = 0;
-      speedY = -10;
+      clearInterval(div.gravity);
+      div.gravity = false;
+      div.timesBounced = 0;
+      div.speedY = -10;
     }
   } else {
-    div.style.top = `${location + speedY}px`;
-    speedY += 1;
+    div.style.top = `${location + div.speedY}px`;
+    div.speedY += 1;
   }
 
 
