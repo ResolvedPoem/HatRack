@@ -110,7 +110,6 @@ function clickPeg(e) {
       inventory.pegs[3] = true;
       break;
   }
-  console.log(inventory.pegs[0]);
 }
 
 function dragElement(elmnt) {
@@ -196,7 +195,6 @@ function dragElement(elmnt) {
       }
 
       if(intersect && (div2Div.id == "pegs,0,1" || div2Div.id == "pegs,1,2"|| div2Div.id == "pegs,1,3"|| div2Div.id == "pegs,2,2")) {
-        //INTERSECT WILL == TRUE SINCE THE HATS ARE TOO BIG. WHAT DO ABOUT THAT? HOW TO UNABLE TO SNAP TO REMOVED POINTS?
         clickPeg({"target": div2Div});
         intersect = false;
       }
@@ -205,9 +203,11 @@ function dragElement(elmnt) {
       var snapY = closest(event.target.offsetTop,snapPointsTop);
 
       if (intersect == true) {
-        elmnt.style.top = `${snapY - elmnt.clientHeight / 8}px`;
-        elmnt.style.left = `${snapX - elmnt.clientWidth / 2}px`;
-        hasSnapped = true;
+        if(!(snapY == snapPointsTop[0] && snapX == snapPointsLeft[1] || snapY == snapPointsTop[1] && snapX == snapPointsLeft[3])) {
+          elmnt.style.top = `${snapY - elmnt.clientHeight / 8}px`;
+          elmnt.style.left = `${snapX - elmnt.clientWidth / 2}px`;
+          hasSnapped = true;          
+        }
       }
     }
     if (!hasSnapped) {
@@ -232,17 +232,19 @@ function applyGravity(div) {
       div.speedX = 0;
   }
   let floor = window.scrollY + window.innerHeight - div.clientHeight;
-  let location = Number(div.style.top.replace(/\D/g,''));
-  let locationLeft = Number(div.style.left.replace(/\D/g,''));
+  let location = Number(div.style.top.replace(/[A-Za-z]+/i,''));
+  let locationLeft = Number(div.style.left.replace(/[A-Za-z]+/i,''));
   if(div.id.includes(`pegs`)) {
-    const rand = Math.random() < 0.5
+    const rand = Math.random() < 0.5;
     if(div.speedX == 0) {
-      if(rand) {
-        div.speedX = 10;
-      } else {
-        div.speedX = -10;
-      }
+     if(rand) {
+       div.speedX = 10;
+     } else {
+       div.speedX = -10;
+     }
     }
+
+    console.log(div.style.left, locationLeft, div.speedX);
     let rotation = div.style.transform.replace(/\D/g,'') || 1;
     rotation = Number(rotation) + 10;
     div.style.transform = `rotate(${rotation}deg)`;
