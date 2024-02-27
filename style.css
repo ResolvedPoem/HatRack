@@ -52,7 +52,7 @@ html {
 }
 #hatTwo {
   left: 40vw;
-  background-image: url("./Images/flatcapPatternTest.png");
+  background-image: url("./Images/FlatcapPatternTest.png");
   background-size: 40vh;
   background-repeat: no-repeat;
   height: 40vh;
@@ -68,7 +68,7 @@ html {
 }
 #hatFour {
   left: 80vw;
-  background-image: url("./Images/visorPatternTest.png");
+  background-image: url("./Images/VisorPatternTest.png");
   background-size: 40vh;
   background-repeat: no-repeat;
   height: 45vh;
