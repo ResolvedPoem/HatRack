@@ -1,10 +1,33 @@
-var playArea = document.getElementById("playArea")
-
-var pegCount = [3,4];
 var snapPointsLeft = [];
 var snapPointsTop = [];
+var pegCount = [3,4];
 let topIteration = 0;
 let snapOffset = [0, 0];
+let speedY = -10;
+let bounces = 3;
+let timesBounced = 0;
+
+// window.onload = function(){
+//   //var recievedInventory = window.location.search;
+//   //inventory = JSON.parse(atob(recievedInventory.slice(1, recievedInventory.length)));
+//   inventory = {"pegs":[false, false, false, false], "hats":[false, false, false, false]};
+//   console.log(inventory);
+//   //switch window test code
+//   window.addEventListener(`keydown`, examineCloser);
+
+
+// function examineCloser(locationName) {
+//   const isNumber = isFinite(event.key);
+//   if(!isNumber) {
+//     return false;
+//   }
+//   let encodedInventory = btoa(JSON.stringify(inventory));
+//   window.location.href = `../HatRack/index.html?${encodedInventory}`;
+// }
+
+var playArea = document.getElementById("playArea")
+
+
 for (var row = 0; row < pegCount[0]; row++) {
   for (var column = 0; column < pegCount[1]; column++) {
     var pegs = document.createElement("div");
@@ -17,9 +40,14 @@ for (var row = 0; row < pegCount[0]; row++) {
     pegs.id = `pegs,${row},${column}`;
     pegs.classList.add(`pegs`);
     pegs.style.zIndex = 2;
-    playArea.appendChild(pegs);
-    if (pegs.id == "pegs,0,1" || pegs.id == "pegs,1,2" || pegs.id == "pegs,1,3" || pegs.id == "pegs,2,2") {
+    if (pegs.id == "pegs,0,1" && !inventory.pegs[0] || pegs.id == "pegs,1,2" && !inventory.pegs[1] || pegs.id == "pegs,1,3" && !inventory.pegs[2] || pegs.id == "pegs,2,2" && !inventory.pegs[3] ) {
+      playArea.appendChild(pegs);
       pegs.addEventListener("click",clickPeg);
+    } else {
+      if(pegs.id == "pegs,0,1" || pegs.id == "pegs,1,2"|| pegs.id == "pegs,1,3"|| pegs.id == "pegs,2,2") {
+        pegs.style.visibility = `hidden`;
+      }
+      playArea.appendChild(pegs);
     }
   }
 }
@@ -49,11 +77,6 @@ for (var row = 0; row < pegCount[0]; row++) {
   }
 }
 
-function closest(val, arr) {
-  return arr.reduce((a, b) => {
-    return Math.abs(b - val) < Math.abs(a - val) ? b : a;
-  });
-}
 
 var draggableElements = document.getElementsByClassName("hat")
 
@@ -61,8 +84,33 @@ for(var i = 0; i < draggableElements.length; i++){
     dragElement(draggableElements[i]);
 }
 
+
+// }
+
+function closest(val, arr) {
+  return arr.reduce((a, b) => {
+    return Math.abs(b - val) < Math.abs(a - val) ? b : a;
+  });
+}
+
 function clickPeg(e) {
   e.target.gravity = setInterval(applyGravity, 10, e.target);
+  switch(e.target.id.split(",")[1]) {
+    case "0":
+      inventory.pegs[0] = true;
+      break;
+    case "1":
+      if(e.target.id.split(",")[2] == 2) {
+      inventory.pegs[1] = true;
+      break;
+      }
+      inventory.pegs[2] = true;
+      break;
+    case "2":
+      inventory.pegs[3] = true;
+      break;
+  }
+  console.log(inventory.pegs[0]);
 }
 
 function dragElement(elmnt) {
@@ -86,8 +134,8 @@ function dragElement(elmnt) {
     if(event.target.gravity) {
       clearInterval(event.target.gravity);
       event.target.gravity = false;
-      timesBounced = 0;
-      speedY = -10;
+      event.target.timesBounced = 0;
+      event.target.speedY = -10;
     }
     document.onmouseup = closeDragElement;
     // call a function whenever the cursor moves:
@@ -108,7 +156,7 @@ function dragElement(elmnt) {
   }
 
   function closeDragElement(event) {
-    let sideSnapOffset = 100;
+    let sideSnapOffset = 0;
     let div1 = event.target.getBoundingClientRect();
     let div1Top = div1.top;
     let div1Left = div1.left + sideSnapOffset;
@@ -118,7 +166,8 @@ function dragElement(elmnt) {
 
     for (i = 0; i < 12; i++) {
 
-      let div2 = document.getElementsByClassName(`pegs`)[i].getBoundingClientRect();
+      let div2Div = document.getElementsByClassName(`pegs`)[i];
+      let div2 = div2Div.getBoundingClientRect();
       let div2Top = div2.top;
       let div2Left = div2.left;
       let div2Right = div2.right;
@@ -140,15 +189,22 @@ function dragElement(elmnt) {
         horizontalMatch = false;
       }
 
-      if (horizontalMatch && verticalMatch){
+      if (horizontalMatch && verticalMatch) {
         intersect = true;
       } else {
         intersect = false;
       }
+
+      if(intersect && (div2Div.id == "pegs,0,1" || div2Div.id == "pegs,1,2"|| div2Div.id == "pegs,1,3"|| div2Div.id == "pegs,2,2")) {
+        //INTERSECT WILL == TRUE SINCE THE HATS ARE TOO BIG. WHAT DO ABOUT THAT? HOW TO UNABLE TO SNAP TO REMOVED POINTS?
+        clickPeg({"target": div2Div});
+        intersect = false;
+      }
+
       var snapX = closest(event.clientX,snapPointsLeft);
       var snapY = closest(event.target.offsetTop,snapPointsTop);
 
-      if (intersect == true){
+      if (intersect == true) {
         elmnt.style.top = `${snapY - elmnt.clientHeight / 8}px`;
         elmnt.style.left = `${snapX - elmnt.clientWidth / 2}px`;
         hasSnapped = true;
@@ -169,20 +225,28 @@ function dragElement(elmnt) {
   }
 }
 
-let speedY = -10;
-let bounces = 3;
-let timesBounced = 0;
 function applyGravity(div) {
   if(div.speedY == undefined) {
       div.timesBounced = 0;
-      div.speedY = -10;    
+      div.speedY = -10;
+      div.speedX = 0;
   }
   let floor = window.scrollY + window.innerHeight - div.clientHeight;
   let location = Number(div.style.top.replace(/\D/g,''));
+  let locationLeft = Number(div.style.left.replace(/\D/g,''));
   if(div.id.includes(`pegs`)) {
+    const rand = Math.random() < 0.5
+    if(div.speedX == 0) {
+      if(rand) {
+        div.speedX = 10;
+      } else {
+        div.speedX = -10;
+      }
+    }
     let rotation = div.style.transform.replace(/\D/g,'') || 1;
     rotation = Number(rotation) + 10;
     div.style.transform = `rotate(${rotation}deg)`;
+    div.style.left = `${locationLeft - div.speedX}px`;
   }
   if(location >= floor) {
     if(div.timesBounced < bounces) {
