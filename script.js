@@ -10,7 +10,7 @@ let timesBounced = 0;
 // window.onload = function(){
 //   //var recievedInventory = window.location.search;
 //   //inventory = JSON.parse(atob(recievedInventory.slice(1, recievedInventory.length)));
-//   inventory = {"pegs":[false, false, false, false], "hats":[false, false, false, false]};
+   inventory = {"pegs":[false, false, false, false], "hats":[false, false, false, false]};
 //   console.log(inventory);
 //   //switch window test code
 //   window.addEventListener(`keydown`, examineCloser);
